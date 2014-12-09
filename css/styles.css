@@ -2,3 +2,31 @@
   margin: 0;
   padding: 0;
 }
+
+body {
+  overflow: hidden;
+}
+
+canvas {
+  width: 6.666666667%;
+  /*height: 120px;*/
+  text-align: center;
+}
+
+
+.overlay {
+  position: absolute;
+  top: 200px;
+  left: 300px;
+  right: 300px;
+  bottom: 200px;
+  /*background-color: rgba(198, 45, 66, 0.5);*/
+  z-index: 9999;
+}
+
+h1 {
+  text-align:center;
+  font-size: 80px;
+  margin-top: 150px;
+  color: #3C8D0D;
+}

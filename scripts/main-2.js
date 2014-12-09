@@ -1,10 +1,12 @@
 $( document ).ready(function() {
 
-  var DEPTH = 2;
-  var MAX_FLAKES = 10;
-  var MIN_FLAKES = 4;
+  var DEPTH = 3;
+  var MAX_FLAKES = 9;
+  var MIN_FLAKES = 6;
+  var CANVAS_HEIGHT = 280;
+  var CANVAS_WIDTH = 280;
 
-  var SNOWFLAKE_RADIUS = 22;
+  var SNOWFLAKE_RADIUS = 50;
   var SPACE_BETWEEN = 0;
   var SNOWFLAKE_SIZE = (SNOWFLAKE_RADIUS + SPACE_BETWEEN * (DEPTH + 1))
   var canvases = []
@@ -24,25 +26,24 @@ $( document ).ready(function() {
     canvasObj['context'] = createContext(canvasObj['canvas']);
     canvasObj['snowflakeGenerator'] = createSnowflakeInstance(canvasObj['canvas']);
     attachEvents(canvasObj);
-    debugger;
     return canvasObj;
   }
 
   function createCanvas(num) {
     var canvas = document.createElement('canvas');
     canvas.id     = "canvas-" + num;
-    canvas.width  = 100;
-    canvas.height = 100;
+    canvas.width  = CANVAS_WIDTH;
+    canvas.height = CANVAS_HEIGHT;
     document.body.appendChild(canvas);
     return canvas;
   }
 
   function createContext(domEle) {
     context = domEle.getContext("2d");
-    context.canvas.width  = 100;
-    context.canvas.height = 100;
+    context.canvas.width  = CANVAS_WIDTH;
+    context.canvas.height = CANVAS_HEIGHT;
     context.fillStyle = 'rgba(198, 45, 66, 0.1)';
-    context.fillRect(0, 0, 100, 100);
+    context.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
     return context;
   }
 
@@ -54,13 +55,22 @@ $( document ).ready(function() {
   function attachEvents(canvasInstance) {
     $(canvasInstance.canvas).on('mouseenter', function (e){
       console.log('mouseenter ' + canvasInstance.id);
-      canvasInstance.snowflakeGenerator.snowFlakes[0].r = 30
-      canvasInstance.snowflakeGenerator.Draw();
+        // $( canvasInstance.canvas ).animate({
+        //   opacity: 0,
+        // }, 800, function() {
+        //   // Animation complete.
+        //   canvasInstance.snowflakeGenerator.Draw();
+        // }).animate({
+        //   opacity: 1,
+        // }, 800, function() {
+        //   // Animation complete.
+        //
+        // });
+
     });
     $(canvasInstance.canvas).on('mouseout', function (e){
       console.log('mouseout ' + canvasInstance.id);
-      canvasInstance.snowflakeGenerator.snowFlakes[0].r = 20
-      canvasInstance.snowflakeGenerator.Draw();
+      //canvasInstance.snowflakeGenerator.Draw();
     });
   }
 
@@ -83,14 +93,14 @@ $( document ).ready(function() {
     	var randomNum = 0;
       var rowNum = 0;
 
-      var min = 3;
-      var max = 18;
+      var min = MIN_FLAKES;
+      var max =MAX_FLAKES;
       randomNum = Math.floor(Math.random() * (max - min + 1)) + min;
 
     	this.snowFlakes.push(
       	{
-            x: 50,
-            y: 50,
+            x: CANVAS_WIDTH/2,
+            y: CANVAS_HEIGHT/2,
             r: SNOWFLAKE_RADIUS,
             d: DEPTH,
             f: randomNum
@@ -102,8 +112,12 @@ $( document ).ready(function() {
       context.save();
       context.translate(flake.x, flake.y);
       context.fillStyle = "rgba(198, 45, 66," + (1 - (1 / (flake.d + 4))).toString() + ")";
-      context.fillRect(-1, -3, 2, 6);
-      context.fillRect(-3, -1, 6, 2);
+      // context.fillRect(-1, -3, 2, 6);
+      // context.fillRect(-3, -1, 6, 2);
+
+
+      context.fillRect(-1.5, -3.5, 3, 7);
+      context.fillRect(-3.5, -1.5, 7, 3);
       var i = 0;
       if (flake.d > 0) {
           for (i = 0; i < flake.f; i++) {
@@ -125,10 +139,10 @@ $( document ).ready(function() {
 
   SnowflakeGenerator.prototype.Draw = function(options) {
       context = this.element.getContext("2d");
-      context.canvas.width  = 100;
-      context.canvas.height = 100;
+      context.canvas.width  = CANVAS_WIDTH;
+      context.canvas.height = CANVAS_HEIGHT;
       context.fillStyle = 'rgba(255, 255, 255, 1)';
-      context.fillRect(0, 0, 100, 100);
+      context.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
       for (i in this.snowFlakes) {
           this.DrawFlake(context, this.snowFlakes[i]);
@@ -142,11 +156,50 @@ $( document ).ready(function() {
 
 
 
-  canvases = createCanvases(500);
+  canvases = createCanvases(135);
   canvases.forEach(function(canvas){
 
     canvas.snowflakeGenerator.Draw();
   });
+
+  setInterval(function() {
+    var canvas = canvases[Math.floor(Math.random() * (canvases.length - 0+ 1)) + 0];
+    var canvas2 = canvases[Math.floor(Math.random() * (canvases.length - (canvases.length/2) + 1)) + (canvases.length/2)];
+    $( canvas.canvas ).animate({
+      opacity: 0,
+    }, 2000, function() {
+      // Animation complete.
+      var min = MIN_FLAKES;
+      var max = MAX_FLAKES;
+      randomNum = Math.floor(Math.random() * (max - min + 1)) + min;
+
+      canvas.snowflakeGenerator.snowFlakes[0].f = randomNum;
+      canvas.snowflakeGenerator.Draw();
+    }).animate({
+      opacity: 1,
+    }, 2000, function() {
+      // Animation complete.
+    });
+
+    $( canvas2.canvas ).animate({
+      opacity: 0,
+    }, 2000, function() {
+      // Animation complete.
+      var min = MIN_FLAKES;
+      var max = MAX_FLAKES;
+      randomNum = Math.floor(Math.random() * (max - min + 1)) + min;
+
+      canvas.snowflakeGenerator.snowFlakes[0].f = randomNum;
+      canvas.snowflakeGenerator.Draw();
+    }).animate({
+      opacity: 1,
+    }, 2000, function() {
+      // Animation complete.
+    });
+
+  }, 800);
+
+
 
 
   //snowflake = new SnowflakeGenerator(snowflakeCanvas[0]);
